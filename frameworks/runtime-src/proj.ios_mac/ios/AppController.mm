@@ -191,10 +191,13 @@ static AppDelegate* s_sharedApplication = nullptr;
         NetworkStatus status = [reach currentReachabilityStatus];
         if (status == NotReachable){
             [NativeOcClass sharedManager].NetType = NotReachable;
-            dispatch_async(dispatch_get_main_queue(), ^{
-                NSString *funcName = @"onReconnect()";
-                se::ScriptEngine::getInstance()->evalString(funcName.UTF8String);
-            });
+			if([NativeOcClass sharedManager].LoadStatus != 0){
+				//只有在登录的状态下才可以断网重连
+				dispatch_async(dispatch_get_main_queue(), ^{
+					NSString *funcName = @"onReconnect()";
+					se::ScriptEngine::getInstance()->evalString(funcName.UTF8String);
+				});
+			}
         }
     };
     
